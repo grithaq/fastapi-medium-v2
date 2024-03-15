@@ -24,5 +24,7 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER: str = config_env("FIRST_SUPERUSER")
     FIRST_SUPERUSER_PASSWORD: str = config_env("FIRST_SUPERUSER_PASSWORD")
 
+    ALGORITHM: str = "HS256"
+
 
 settings = Settings()
