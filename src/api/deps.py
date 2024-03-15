@@ -1,15 +1,16 @@
 from typing import Generator
-from fastapi import Depends, status, HTTPException
+
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
-from core.config import settings
-from db.session import SessionLocal
-from sqlalchemy.orm import Session
-from db.models.user import User
-import schemas
 from pydantic import ValidationError
-import crud
+from sqlalchemy.orm import Session
 
+import crud
+import schemas
+from core.config import settings
+from db.models.user import User
+from db.session import SessionLocal
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/api/v1/login/access-token"
@@ -23,9 +24,9 @@ def get_db() -> Generator:
     finally:
         db.close()
 
-    
+
 def get_current_user(
-        db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
+    db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
 ) -> User:
     try:
         payload = jwt.decode(
@@ -35,7 +36,7 @@ def get_current_user(
     except (jwt.JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials"
+            detail="Could not validate credentials",
         )
     user = crud.user.get(db, id=token_data.sub)
     if not user:
@@ -43,16 +44,14 @@ def get_current_user(
     return user
 
 
-def get_current_acctive_user(
-        current_user: User = Depends(get_current_user)
-) -> User:
+def get_current_acctive_user(current_user: User = Depends(get_current_user)) -> User:
     if not crud.user.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 
 def get_current_active_superuser(
-        current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ) -> User:
     if not crud.user.is_superuser(current_user):
         raise HTTPException(

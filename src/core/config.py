@@ -1,6 +1,5 @@
-from starlette.config import Config
 from pydantic_settings import BaseSettings
-
+from starlette.config import Config
 
 config_env = Config(".env")
 
@@ -21,6 +20,9 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = config_env("POSTGRES_DB")
 
     DATABASE_URL: str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+
+    FIRST_SUPERUSER: str = config_env("FIRST_SUPERUSER")
+    FIRST_SUPERUSER_PASSWORD: str = config_env("FIRST_SUPERUSER_PASSWORD")
 
 
 settings = Settings()

@@ -6,14 +6,14 @@ from passlib.context import CryptContext
 
 from core.config import settings
 
-pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 ALGORITHM = "HS256"
 
 
 def create_access_token(
-        subject: Union[str, Any], expires_delta: timedelta = None
+    subject: Union[str, Any], expires_delta: timedelta = None
 ) -> str:
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -21,16 +21,12 @@ def create_access_token(
         expire = datetime.utcnow() + timedelta(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTE
         )
-    to_encode = {'exp': expire, "sub": str(subject)}
-    encode_jwt = jwt.encode(
-        to_encode, settings.SECRET_KEY, algorithm=ALGORITHM
-        )
+    to_encode = {"exp": expire, "sub": str(subject)}
+    encode_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=ALGORITHM)
     return encode_jwt
 
 
-def verify_password(
-        plain_password: str, hashed_password: str
-) -> bool:
+def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 

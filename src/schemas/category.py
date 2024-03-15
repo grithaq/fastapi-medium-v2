@@ -1,7 +1,8 @@
-from pydantic import BaseModel
-from .base import ResponseModel
-from typing import TypeVar, List
+from typing import List, TypeVar
 
+from pydantic import BaseModel
+
+from .base import ResponseModel
 
 T = TypeVar
 
