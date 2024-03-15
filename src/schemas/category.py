@@ -12,5 +12,14 @@ class CategoryRequest(BaseModel):
     name: str
 
 
+class CategoryCreate(BaseModel):
+    id: int
+    name: str
+
+
+class CategoryUpdate(BaseModel):
+    name: str
+
+
 class CategoryResponse(ResponseModel):
     categories: List = [T]
