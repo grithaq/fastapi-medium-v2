@@ -10,3 +10,6 @@ db-migrate:
 
 db-upgrade:
 	PYTHONPATH=src alembic upgrade head
+
+db-prestart:
+	PYTHONPATH=src python ./src/initial_data.py
