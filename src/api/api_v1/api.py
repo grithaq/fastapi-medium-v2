@@ -1,8 +1,6 @@
 from fastapi import APIRouter
 
-from api.api_v1.endpoints import (
-    category, login
-)
+from api.api_v1.endpoints import category, login
 
 api_router = APIRouter()
 

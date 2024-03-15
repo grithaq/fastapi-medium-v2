@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
-from api.deps import get_db, get_current_user
 from sqlalchemy.orm import Session
-from db.models import User
 
+from api.deps import get_current_user, get_db
+from db.models import User
 from src.schemas.category import CategoryRequest, CategoryResponse
 
 router = APIRouter()
