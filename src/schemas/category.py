@@ -23,3 +23,7 @@ class CategoryUpdate(BaseModel):
 
 class CategoryResponse(ResponseModel):
     categories: List = [T]
+
+
+class CategorySchema(CategoryRequest):
+    user_id: int

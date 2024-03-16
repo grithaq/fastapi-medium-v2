@@ -4,9 +4,24 @@ from sqlalchemy.orm import Session
 import crud
 from api.deps import get_current_user, get_db
 from db.models import User
-from src.schemas.category import CategoryRequest, CategoryResponse
+from src.schemas.category import CategoryRequest, CategoryResponse, CategorySchema
 
 router = APIRouter()
+
+
+@router.get("/")
+def get_category(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    print(current_user.id)
+    categories = crud.category.get(db, user_id=current_user.id)
+    categories = [CategorySchema(user_id=category.user_id,id=category.id, name=category.name) for category in categories]
+    return CategoryResponse(
+        message="Success",
+        status=str(status.HTTP_200_OK),
+        categories=categories
+    )
 
 
 @router.post(
