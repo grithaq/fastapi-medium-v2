@@ -1,2 +1,2 @@
-from .category import * #noqa
-from .user import * #noqa
+from .category import *  # noqa
+from .user import *  # noqa
