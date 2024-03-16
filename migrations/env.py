@@ -31,11 +31,6 @@ target_metadata = Base.metadata
 
 
 def get_url():
-    # user = os.getenv("POSTGRES_USER", "postgres")
-    # password = os.getenv("POSTGRES_PASSWORD", "")
-    # server = os.getenv("POSTGRES_SERVER", "localhost")
-    # db = os.getenv("POSTGRES_DB", "db")
-
     user = settings.POSTGRES_USER
     password = settings.POSTGRES_PASSWORD
     host = settings.POSTGRES_HOST
