@@ -8,6 +8,22 @@ import crud
 router = APIRouter()
 
 
+@router.get("/")
+def get_todos(
+    per_page: int,
+    page: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    todos = crud.todos.get_all(db, user_id=current_user.id)
+    return TodoResponse(
+        message="Success",
+        status=str(status.HTTP_200_OK),
+        data=[
+            TodoCreate(title=t.title, description=t.description, category_id=t.category_id) for t in todos
+        ],
+    )
+
 @router.post("/")
 def create_todo(
     todo: TodoRequest,

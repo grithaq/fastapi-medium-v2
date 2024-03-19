@@ -1,4 +1,5 @@
-from .base import BaseModel, ResponseModel
+from .base import BaseModel, ResponseModel, T
+from typing import List
 
 
 class TodoRequest(BaseModel):
@@ -20,4 +21,4 @@ class TodoUpdate(BaseModel):
 
 
 class TodoResponse(ResponseModel):
-    todo: TodoCreate
+    data: List[T]
