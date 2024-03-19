@@ -12,7 +12,7 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
     def create(
         self, db: Session, obj_in: CategoryCreate, user_id: int
     ) -> Optional[Category]:
-        db_obj = Category(obj_in.model_dump(), user_id=user_id)
+        db_obj = Category(name=obj_in.name, user_id=user_id)
         db.add(db_obj)
         db.commit()
         db.refresh(db_obj)
@@ -40,7 +40,7 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
             return category
         else:
             return None
-        
+
     def delete(self, db: Session, *, id: int, user_id: int) -> Optional[Category]:
         category = (
             db.query(Category)
