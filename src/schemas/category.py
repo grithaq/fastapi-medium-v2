@@ -21,7 +21,7 @@ class CategoryUpdate(BaseModel):
 
 
 class CategoryResponse(ResponseModel):
-    categories: List = [T]
+    data: List = [T]
 
 
 class CategorySchema(CategoryRequest):

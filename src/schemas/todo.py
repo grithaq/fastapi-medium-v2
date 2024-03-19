@@ -1,5 +1,6 @@
-from .base import BaseModel, ResponseModel, T
 from typing import List
+
+from .base import BaseModel, ResponseModel, T
 
 
 class TodoRequest(BaseModel):
