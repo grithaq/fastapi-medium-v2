@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from db.models import Category
-from schemas import CategoryCreate, CategoryUpdate
+from schemas import CategoryCreate, CategoryUpdate, CategoryRequest
 
 from .base import CRUDBase
 
@@ -21,6 +21,18 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
     def get(self, db: Session, user_id: int) -> Optional[Category]:
         categories = db.query(Category).filter(Category.user_id == user_id).all()
         return categories
+    
+    def update(self, db: Session, obj_in: CategoryCreate, user_id: int) -> Optional[Category]:
+        category = db.query(Category).filter(Category.user_id == user_id).filter(Category.id == obj_in.id).first()
+        if category is not None:
+            category.name = obj_in.name
+            category.user_id = user_id
+            db.add(category)
+            db.commit()
+            db.refresh(category)
+            return category
+        else:
+            return None
 
 
 category = CRUDCategory(Category)
