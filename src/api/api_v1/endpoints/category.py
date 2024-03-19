@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 import crud
 from api.deps import get_current_user, get_db
 from db.models import User
-from src.schemas.category import CategoryRequest, CategoryResponse, CategorySchema
+from src.schemas.category import (CategoryRequest, CategoryResponse,
+                                  CategorySchema)
 
 router = APIRouter()
 
@@ -16,11 +17,12 @@ def get_category(
 ):
     print(current_user.id)
     categories = crud.category.get(db, user_id=current_user.id)
-    categories = [CategorySchema(user_id=category.user_id,id=category.id, name=category.name) for category in categories]
+    categories = [
+        CategorySchema(user_id=category.user_id, id=category.id, name=category.name)
+        for category in categories
+    ]
     return CategoryResponse(
-        message="Success",
-        status=str(status.HTTP_200_OK),
-        categories=categories
+        message="Success", status=str(status.HTTP_200_OK), categories=categories
     )
 
 
@@ -49,9 +51,7 @@ def update_category(
     current_user: User = Depends(get_current_user),
 ):
     print(category)
-    category_obj = crud.category.update(
-        db, obj_in=category, user_id=current_user.id
-    )
+    category_obj = crud.category.update(db, obj_in=category, user_id=current_user.id)
     if category is not None:
         category_schema = CategoryRequest(id=category_obj.id, name=category_obj.name)
         return CategoryResponse(
@@ -65,3 +65,17 @@ def update_category(
             status=str(status.HTTP_404_NOT_FOUND),
             categories=[],
         )
+
+
+@router.delete("/{category_id}")
+def delete_category(
+    category_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    crud.category.delete(db, id=int(category_id), user_id=current_user.id)
+    return CategoryResponse(
+        message="Success",
+        status=str(status.HTTP_200_OK),
+        categories=[],
+    )
