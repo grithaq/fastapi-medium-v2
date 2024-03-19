@@ -13,7 +13,6 @@ class CategoryRequest(BaseModel):
 
 
 class CategoryCreate(BaseModel):
-    id: int
     name: str
 
 
