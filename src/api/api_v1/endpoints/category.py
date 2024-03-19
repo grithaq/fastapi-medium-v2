@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 import crud
 from api.deps import get_current_user, get_db
 from db.models import User
-from src.schemas.category import (CategoryRequest, CategoryResponse,
-                                  CategorySchema)
+from src.schemas.category import (CategoryCreate, CategoryRequest,
+                                  CategoryResponse, CategorySchema)
 
 router = APIRouter()
 
@@ -30,7 +30,7 @@ def get_category(
     "/",
 )
 def create_category(
-    category: CategoryRequest,
+    category: CategoryCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
