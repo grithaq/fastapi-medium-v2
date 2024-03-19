@@ -40,6 +40,20 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
             return category
         else:
             return None
+        
+    def delete(self, db: Session, *, id: int, user_id: int) -> Optional[Category]:
+        category = (
+            db.query(Category)
+            .filter(Category.user_id == user_id)
+            .filter(Category.id == id)
+            .first()
+        )
+        if category is not None:
+            db.delete(category)
+            db.commit()
+            return category
+        else:
+            return None
 
 
 category = CRUDCategory(Category)

@@ -65,3 +65,17 @@ def update_category(
             status=str(status.HTTP_404_NOT_FOUND),
             categories=[],
         )
+
+
+@router.delete("/{category_id}")
+def delete_category(
+    category_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    crud.category.delete(db, id=int(category_id), user_id=current_user.id)
+    return CategoryResponse(
+        message="Success",
+        status=str(status.HTTP_200_OK),
+        categories=[],
+    )
