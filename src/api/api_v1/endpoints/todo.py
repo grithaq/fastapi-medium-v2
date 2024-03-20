@@ -67,3 +67,25 @@ def update_todo(
             status=str(status.HTTP_404_NOT_FOUND),
             data=[],
         )
+    
+
+@router.delete("/{todo_id}")
+def delete_todo(
+    todo_id: str, db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    todo = crud.todos.delete_by_todo_id(
+        db, todo_id=todo_id
+    )
+    if todo is not None:
+        return TodoResponse(
+            message="Success",
+            status=str(status.HTTP_200_OK),
+            data=[],
+        )
+    else:
+        return TodoResponse(
+            message="Todo not found",
+            status=str(status.HTTP_404_NOT_FOUND),
+            data=[],
+        )

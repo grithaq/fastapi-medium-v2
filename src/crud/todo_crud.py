@@ -42,6 +42,19 @@ class CRUDTodo(CRUDBase[Todo, TodoCreate, TodoUpdate]):
             return todo_from_db
         else:
             return None
-
+    
+    def delete_by_todo_id(
+        self,
+        db: Session,
+        todo_id: int
+    ):
+        todo_from_db = db.query(Todo).filter(Todo.id == todo_id).first()
+        if todo_from_db is not None:
+            db.delete(todo_from_db)
+            db.commit()
+            return "success"
+        else:
+            return None
+        
 
 todos = CRUDTodo(Todo)
