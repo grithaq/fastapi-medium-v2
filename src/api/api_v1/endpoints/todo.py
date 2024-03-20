@@ -42,3 +42,28 @@ def create_todo(
     return TodoResponse(
         message="Success", status=str(status.HTTP_201_CREATED), data=[todo_schema]
     )
+
+
+@router.put("/{todo_id}")
+def update_todo(
+    todo_id: str, todo: TodoRequest, db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    todo = crud.todos.update_by_todo_id(
+        db, obj_in= todo, todo_id=todo_id
+    )
+    if todo is not None:
+        todo_schema = TodoCreate(
+            title=todo.title, description=todo.description, category_id=todo.category_id
+        )
+        return TodoResponse(
+            message="Success",
+            status=str(status.HTTP_200_OK),
+            data=[todo_schema],
+        )
+    else:
+        return TodoResponse(
+            message="Todo not found",
+            status=str(status.HTTP_404_NOT_FOUND),
+            data=[],
+        )
