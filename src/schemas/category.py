@@ -26,3 +26,9 @@ class CategoryResponse(ResponseModel):
 
 class CategorySchema(CategoryRequest):
     user_id: int
+
+
+class ListCategoryRespose(ResponseModel):
+    current: int
+    total: int
+    data: List = [T]
