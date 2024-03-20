@@ -18,7 +18,7 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
         db.refresh(db_obj)
         return db_obj
 
-    def get(self, db: Session, user_id: int) -> Optional[Category]:
+    def get_all_by_user_id(self, db: Session, user_id: int) -> Optional[Category]:
         categories = db.query(Category).filter(Category.user_id == user_id).all()
         return categories
 
