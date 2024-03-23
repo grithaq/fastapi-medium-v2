@@ -1,6 +1,7 @@
 from typing import List
 
 from .base import BaseModel, ResponseModel, T
+from .category import CategoryRequest
 
 
 class TodoRequest(BaseModel):
@@ -23,3 +24,17 @@ class TodoUpdate(BaseModel):
 
 class TodoResponse(ResponseModel):
     data: List[T]
+
+
+class TodoSchema(BaseModel):
+    id: int
+    title: str
+    description: str
+    user_id: int
+    category: CategoryRequest
+
+
+class ListTodoResponse(ResponseModel):
+    current: int
+    total: int
+    data: List[TodoSchema]
