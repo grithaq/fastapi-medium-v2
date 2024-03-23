@@ -9,3 +9,6 @@ class Todo(Base):
     title = Column(String)
     description = Column(String)
     category_id = Column(Integer, ForeignKey("category.id"), nullable=True)
+
+    def __repr__(self) -> str:
+        return f"{self.title}"

@@ -2,16 +2,30 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from db.models import Todo
+from db.models import User, Category, Todo
 from schemas import TodoCreate, TodoUpdate
 
 from .base import CRUDBase
 
 
 class CRUDTodo(CRUDBase[Todo, TodoCreate, TodoUpdate]):
-    def get_all_by_user_id(self, db: Session, user_id: int) -> Optional[Todo]:
-        todos = db.query(Todo).filter(Todo.user_id == user_id).all()
-        return todos
+    def get_all_by_user_id(self, db: Session, user_id: int, per_page: int, page: int) -> Optional[Todo]:
+        limit = per_page
+        page = page
+        offset = (limit * page) - limit
+        todo = db.query(
+            User.id.label("user_id"), User.email,
+            Category.id.label("category_id"), Category.name.label("category_name"),
+            Todo.id.label("todo_id"), Todo.title, Todo.description
+            ).join(Category, Category.user_id == User.id).join(Todo, Todo.category_id == Category.id).filter(User.id == user_id).limit(limit).offset(offset).all()
+        return todo
+    
+    def count_data_by_user_id(self, db: Session, user_id: int) -> int:
+        return db.query(User, Category, Todo).join(
+            Category, Category.user_id == User.id
+        ).join(
+            Todo, Todo.category_id == Category.id
+        ).filter(User.id == user_id).count()
 
     def create(
         self, db: Session, *, obj_in: TodoCreate
