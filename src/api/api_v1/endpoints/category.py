@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-import crud
+import repositories
 from api.deps import get_current_user, get_db
 from db.models import User
-from utils import pagination
 from src.schemas.category import (CategoryCreate, CategoryRequest,
                                   CategoryResponse, CategorySchema,
-                                  ResponseModel, ListCategoryRespose)
+                                  ListCategoryRespose, ResponseModel)
 
 router = APIRouter()
 
@@ -19,15 +18,22 @@ def get_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    categories = crud.category.get_all_by_user_id(db, user_id=current_user.id, per_page=per_page, page=page)
-    total_data = crud.category.count_data_by_user_id(db, user_id=current_user.id)
+    categories = repositories.category.get_all_by_user_id(
+        db, user_id=current_user.id, per_page=per_page, page=page
+    )
+    total_data = repositories.category.count_data_by_user_id(
+        db, user_id=current_user.id
+    )
     items = [
         CategorySchema(user_id=category.user_id, id=category.id, name=category.name)
         for category in categories
     ]
     return ListCategoryRespose(
-        message="Success", status=str(status.HTTP_200_OK), data=items,
-        current=page, total=total_data
+        message="Success",
+        status=str(status.HTTP_200_OK),
+        data=items,
+        current=page,
+        total=total_data,
     )
 
 
@@ -39,8 +45,12 @@ def create_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    category_obj = crud.category.create(db, obj_in=category, user_id=current_user.id)
-    category_schema = CategorySchema(id=category_obj.id, name=category_obj.name, user_id=category_obj.user_id)
+    category_obj = repositories.category.create(
+        db, obj_in=category, user_id=current_user.id
+    )
+    category_schema = CategorySchema(
+        id=category_obj.id, name=category_obj.name, user_id=category_obj.user_id
+    )
     return CategoryResponse(
         data=[category_schema],
         message="Success",
@@ -55,13 +65,15 @@ def update_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    category_obj = crud.category.update(db, obj_in=category, user_id=current_user.id)
+    category_obj = repositories.category.update(
+        db, obj_in=category, user_id=current_user.id
+    )
     if category is not None:
-        category_schema = CategorySchema(id=category_obj.id, name=category_obj.name, user_id=category_obj.user_id)
+        category_schema = CategorySchema(
+            id=category_obj.id, name=category_obj.name, user_id=category_obj.user_id
+        )
         return CategoryResponse(
-            message="Success",
-            status=str(status.HTTP_200_OK),
-            data=[category_schema]
+            message="Success", status=str(status.HTTP_200_OK), data=[category_schema]
         )
     else:
         return CategoryResponse(
@@ -77,7 +89,7 @@ def delete_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    crud.category.delete(db, id=int(category_id), user_id=current_user.id)
+    repositories.category.delete(db, id=int(category_id), user_id=current_user.id)
     return ResponseModel(
         message="Success",
         status=str(status.HTTP_200_OK),

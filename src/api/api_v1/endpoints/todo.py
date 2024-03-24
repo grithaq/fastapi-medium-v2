@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-import crud
+import repositories
 from api.deps import get_current_user, get_db
 from db.models import User
-from schemas import TodoCreate, TodoRequest, TodoResponse, ListTodoResponse, TodoSchema, CategoryRequest
+from schemas import (CategoryRequest, ListTodoResponse, TodoCreate,
+                     TodoRequest, TodoResponse, TodoSchema)
 
 router = APIRouter()
 
@@ -16,24 +17,26 @@ def get_todos(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    todos = crud.todos.get_all_by_user_id(
+    todos = repositories.todos.get_all_by_user_id(
         db, user_id=current_user.id, per_page=per_page, page=page
     )
-    total_data = crud.todos.count_data_by_user_id(
-        db, user_id=current_user.id
-    )
+    total_data = repositories.todos.count_data_by_user_id(db, user_id=current_user.id)
     data = []
     for t in todos:
         todo_response_schema = TodoSchema(
-            id=t.todo_id, title=t.title, description=t.description, user_id=t.user_id,
-            category=CategoryRequest(id=t.category_id, name=t.category_name))
+            id=t.todo_id,
+            title=t.title,
+            description=t.description,
+            user_id=t.user_id,
+            category=CategoryRequest(id=t.category_id, name=t.category_name),
+        )
         data.append(todo_response_schema.model_dump(exclude_unset=True))
     return ListTodoResponse(
         message="Success",
         status=str(status.HTTP_200_OK),
         current=page,
         total=total_data,
-        data=data
+        data=data,
     )
 
 
@@ -43,7 +46,7 @@ def create_todo(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    todo = crud.todos.create(db, obj_in=todo)
+    todo = repositories.todos.create(db, obj_in=todo)
     todo_schema = TodoCreate(
         title=todo.title, description=todo.description, category_id=todo.category_id
     )
@@ -54,12 +57,12 @@ def create_todo(
 
 @router.put("/{todo_id}")
 def update_todo(
-    todo_id: str, todo: TodoRequest, db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    todo_id: str,
+    todo: TodoRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    todo = crud.todos.update_by_todo_id(
-        db, obj_in= todo, todo_id=todo_id
-    )
+    todo = repositories.todos.update_by_todo_id(db, obj_in=todo, todo_id=todo_id)
     if todo is not None:
         todo_schema = TodoCreate(
             title=todo.title, description=todo.description, category_id=todo.category_id
@@ -75,16 +78,15 @@ def update_todo(
             status=str(status.HTTP_404_NOT_FOUND),
             data=[],
         )
-    
+
 
 @router.delete("/{todo_id}")
 def delete_todo(
-    todo_id: str, db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    todo_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    todo = crud.todos.delete_by_todo_id(
-        db, todo_id=todo_id
-    )
+    todo = repositories.todos.delete_by_todo_id(db, todo_id=todo_id)
     if todo is not None:
         return TodoResponse(
             message="Success",
