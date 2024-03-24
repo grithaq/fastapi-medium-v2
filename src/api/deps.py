@@ -6,7 +6,7 @@ from jose import jwt
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-import crud
+import repositories
 import schemas
 from core.config import settings
 from db.models.user import User
@@ -38,14 +38,14 @@ def get_current_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    user = crud.user.get(db, id=token_data.sub)
+    user = repositories.user.get(db, id=token_data.sub)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
 
 def get_current_acctive_user(current_user: User = Depends(get_current_user)) -> User:
-    if not crud.user.is_active(current_user):
+    if not repositories.user.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
@@ -53,7 +53,7 @@ def get_current_acctive_user(current_user: User = Depends(get_current_user)) -> 
 def get_current_active_superuser(
     current_user: User = Depends(get_current_user),
 ) -> User:
-    if not crud.user.is_superuser(current_user):
+    if not repositories.user.is_superuser(current_user):
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"
         )
