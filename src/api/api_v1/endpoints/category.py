@@ -19,17 +19,15 @@ def get_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    categories = crud.category.get_all_by_user_id(db, user_id=current_user.id)
-    categories = pagination.paginate(
-        items=categories, page=page, per_page=per_page
-    )
+    categories = crud.category.get_all_by_user_id(db, user_id=current_user.id, per_page=per_page, page=page)
+    total_data = crud.category.count_data_by_user_id(db, user_id=current_user.id)
     items = [
         CategorySchema(user_id=category.user_id, id=category.id, name=category.name)
-        for category in categories['items']
+        for category in categories
     ]
     return ListCategoryRespose(
         message="Success", status=str(status.HTTP_200_OK), data=items,
-        current=categories['current'], total=categories['total']
+        current=page, total=total_data
     )
 
 

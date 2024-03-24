@@ -18,9 +18,15 @@ class CRUDCategory(CRUDBase[Category, CategoryCreate, CategoryUpdate]):
         db.refresh(db_obj)
         return db_obj
 
-    def get_all_by_user_id(self, db: Session, user_id: int) -> Optional[Category]:
-        categories = db.query(Category).filter(Category.user_id == user_id).all()
+    def get_all_by_user_id(self, db: Session, user_id: int, page: int, per_page: int) -> Optional[Category]:
+        limit = per_page
+        page = page
+        offset = (limit * page) - limit
+        categories = db.query(Category).filter(Category.user_id == user_id).limit(limit).offset(offset).all()
         return categories
+    
+    def count_data_by_user_id(self, db: Session, user_id: int):
+        return db.query(Category).filter(Category.user_id == user_id).count()
 
     def update(
         self, db: Session, obj_in: CategoryCreate, user_id: int
