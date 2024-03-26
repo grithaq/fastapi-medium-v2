@@ -13,3 +13,11 @@ db-upgrade:
 
 db-prestart:
 	PYTHONPATH=src python ./src/initial_data.py
+
+
+run-test:
+ifdef dst
+	PYTHONPATH=src python -m pytest $(dst) -v
+else
+	PYTHONPATH=src python -m pytest -v
+endif
